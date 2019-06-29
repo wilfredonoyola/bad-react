@@ -3,9 +3,13 @@ import fetch from 'isomorphic-unfetch'
 import nextCookie from 'next-cookies'
 import {isLogged, withAuthSync} from '../utils/auth'
 import Layout from '../components/layout'
+import Loading from '../components/loading';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLongArrowAltLeft } from '@fortawesome/free-solid-svg-icons'
 import { ToastContainer, toast } from 'react-toastify';
+import Select from 'react-select';
+import agent from '../utils/agent';
+
 
 const MessageError = function(props){
   if(!props.error){
@@ -31,98 +35,6 @@ const ButtonAction = function(props){
   )
 }
 
-// Companies
-const SelectCompanies = function(props){
-  if(!props.peoples){
-    return (
-      <div>Cargando personas...</div>
-    )
-  }
-
-  return (
-    props.peoples.map((people) =>
-      <option
-        key={people.idPersona}
-        value={people.idPersona}>
-        {people.nombrePersona + ' ' + people.apellidoPersona}
-      </option>
-    )
-  )
-}
-
-const SelectFirstOptionCompany = function(props){
-  if(props.peoples && props.peoples.length && props.action && props.action === 'edit'){
-    const currentPerson = props.peoples.find( person => person.idPersona === props.idPerson );
-    if(currentPerson && currentPerson.idPersona){
-      return (
-        <option value={currentPerson.idPersona}>
-          {currentPerson.nombrePersona + ' ' + currentPerson.apellidoPersona}
-        </option>
-      )
-    }else{
-      return (
-        <option>
-          Seleccione una Empresa
-        </option>
-      )
-    }
-
-  }
-
-  return (
-    <option>
-      Seleccione una persona
-    </option>
-  )
-}
-
-
-// Employee
-const SelectEmployee = function(props){
-  if(!props.employee){
-    return (
-      <div>Cargando Empleados...</div>
-    )
-  }
-
-  return (
-    props.employee.map((emplo) =>
-      <option
-        key={emplo.id}
-        value={emplo.id}>
-        {emplo.nombreCompleto}
-      </option>
-    )
-  )
-}
-
-const SelectFirstOptionEmployee = function(props){
-  if(props.peoples && props.peoples.length && props.action && props.action === 'edit'){
-    const currentPerson = props.peoples.find( person => person.idPersona === props.idPerson );
-    if(currentPerson && currentPerson.idPersona){
-      return (
-        <option value={currentPerson.idPersona}>
-          {currentPerson.nombrePersona + ' ' + currentPerson.apellidoPersona}
-        </option>
-      )
-    }else{
-      return (
-        <option>
-          Seleccione una Empresa
-        </option>
-      )
-    }
-
-  }
-
-  return (
-    <option>
-      Seleccione una persona
-    </option>
-  )
-}
-
-
 
 class Add extends Component {
   constructor (props) {
@@ -136,8 +48,13 @@ class Add extends Component {
       action: '',
       id: '',
       idPerson: '',
+      employees: [],
       companies: [],
-      employee: []
+      employments: [],
+      selectEmployee: null,
+      selectCompany: null,
+      selectEmployment: null,
+      isLoading: false
     }
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
@@ -146,6 +63,8 @@ class Add extends Component {
   componentDidMount(){
     this.getCompanies();
     this.getPeoplesNotEmployee();
+    this.getEmployments();
+    agent.setToken(this.props.token);
     if(this.props.action && this.props.action ==='edit'){
       const _person = this.props.person;
       console.log('PERSON : ', _person);
@@ -205,7 +124,11 @@ class Add extends Component {
       })
       if (response.ok) {
         const companies = await response.json()
-        this.setState({companies : companies})
+        console.log('companies : ', companies);
+        const _companies = companies.map(function (company) {
+          return { value: company.id, label: company.nombreEmpresa };
+        });
+        this.setState({companies : _companies});
       } else {
         let error = new Error(response.statusText)
         error.response = response
@@ -219,6 +142,7 @@ class Add extends Component {
       // this.setState({ error: error.message })
     }
   }
+
 
   async getPeoplesNotEmployee(){
     const url =  `${process.env.API_URL}/Empleadoes/ObtenerPersonasNoEmpleadas`
@@ -237,8 +161,47 @@ class Add extends Component {
       })
       if (response.ok) {
         const employee = await response.json()
-        console.log(' employeee : ', employee)
-        this.setState({employee : employee})
+        console.log(' employeee : ', employee);
+        const _employee = employee.map(function (emp) {
+          return { value: emp.id, label: emp.nombreCompleto };
+        });
+        this.setState({employee : _employee})
+      } else {
+        let error = new Error(response.statusText)
+        error.response = response
+        throw error
+      }
+    } catch (error) {
+      console.error(
+        'You have an error in your code or there are Network issues.',
+        error
+      )
+      // this.setState({ error: error.message })
+    }
+  }
+
+  async getEmployments(){
+    const url =  `${process.env.API_URL}/Empleadoes/ObtenerPuestos`
+
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        // credentials: 'include',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          // 'Access-Control-Allow-Origin': '*',
+          'Authorization': 'Bearer ' + this.props.token ,
+        },
+        // body: JSON.stringify(aPerson)
+      })
+      if (response.ok) {
+        const employments = await response.json()
+        console.log('Employments : ', employments);
+        const _employments = employments.map(function (employment) {
+          return { value: employment.id, label: employment.nombreLista };
+        });
+        this.setState({employments : _employments});
       } else {
         let error = new Error(response.statusText)
         error.response = response
@@ -263,58 +226,51 @@ class Add extends Component {
     });
   }
 
-  async handleSubmit (event) {
-    event.preventDefault()
-    this.setState({ error: '' })
-    const aPerson =  {
-      "clave": this.state.password,
-      "correoElectronico": this.state.email,
-      "idPersona": this.state.idPerson
-    }
+  handleChangeSelectCompany = selectCompany => {
+    this.setState({ selectCompany });
+  };
 
+  handleChangeSelectEmployee = selectEmployee => {
+    this.setState({ selectEmployee });
+  };
+
+  handleChangeSelectEmployment = selectEmployment => {
+    this.setState({ selectEmployment });
+  };
+
+  async handleSubmit (event) {
+    event.preventDefault();
     let isValidForm = true;
-    for (let [key, value] of Object.entries(aPerson)) {
-      if( !value ){
-        isValidForm = false;
-      }
+    const _this = this;
+    this.setState({ error: '' });
+    if(!this.state.selectCompany || !this.state.selectEmployee || !this.state.selectEmployment){
+      isValidForm = false;
     }
     if(!isValidForm){
       this.setState({ error: 'Es requerido llenar todos los campos'});
       return ;
     }
+    const aEmployee =  {
+      "idEmpresa": this.state.selectCompany.value,
+      "idPersona": this.state.selectEmployee.value,
+      "idPuesto": this.state.selectEmployment.value
+    };
 
-    const url = this.props.action === 'edit' ? `${process.env.API_URL}/Usuarios/${this.state.id}` : `${process.env.API_URL}/Usuarios`
+    this.setState({isLoading: true});
 
-    try {
-      const response = await fetch(url, {
-        method: this.props.action === 'edit' ? 'PUT' : 'POST',
-        // credentials: 'include',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-          'Authorization': 'Bearer ' + this.props.token ,
-        },
-        body: JSON.stringify(aPerson)
-      })
-      if (response.ok) {
-        this.notify();
-        window.location.href = '/users';
-      } else {
-        let error = new Error(response.statusText)
-        error.response = response
-        throw error
-      }
-    } catch (error) {
-      console.error(
-        'You have an error in your code or there are Network issues.',
-        error
-      )
-      this.setState({ error: error.message })
-    }
+    const url = this.props.action === 'edit' ? `${process.env.API_URL}/Usuarios/${this.state.id}` : `${process.env.API_URL}/Empleadoes`
+    agent.Employee.create(aEmployee).then(function (res) {
+      _this.notify();
+      _this.setState({isLoading: false});
+      window.location.href = '/employee';
+    }, function (err) {
+      _this.setState({isLoading: false});
+      _this.errorNotify();
+    })
   }
 
-  notify = () => toast("Usuario Agregado exitosamente!", { type: 'success', autoClose: 2000 });
+  notify = () => toast("Empleado Agregado exitosamente!", { type: 'success', autoClose: 2000 });
+  errorNotify = () => toast("Ha ocurrido un error al agregar un empleado.", { type: 'error', autoClose: 4000 });
 
   render () {
     return (
@@ -331,37 +287,33 @@ class Add extends Component {
           <div>
             <ToastContainer />
           </div>
-
+          <Loading isLoading={this.state.isLoading}/>
           <form className="form-signin text-center" onSubmit={this.handleSubmit}>
             <MessageError error={this.state.error}/>
             <label htmlFor="inputEmail" className="sr-only">Email address</label>
-            <select value={this.state.idPerson}
-                    id='idPerson'
-                    name='idPerson'
-                    className="form-control my-2"
-                    onChange={this.handleChange}>
-              <SelectFirstOptionCompany action={this.state.action} peoples={this.state.peoples} idPerson={this.state.idPerson}/>
-              <SelectCompanies peoples={this.state.peoples}/>
-            </select>
+            <Select
+              className="my-2"
+              placeholder="Selecciona una Empresa"
+              value={this.state.selectCompany}
+              onChange={this.handleChangeSelectCompany}
+              options={this.state.companies}
+            />
 
-            <select value={this.state.idPerson}
-                    id='idPerson'
-                    name='idPerson'
-                    className="form-control my-2"
-                    onChange={this.handleChange}>
-              <SelectFirstOptionEmployee action={this.state.action} employee={this.state.employee} idPerson={this.state.idPerson}/>
-              <SelectEmployee employee={this.state.employee}/>
-            </select>
+            <Select
+              className="my-2"
+              placeholder="Selecciona una Empleado"
+              value={this.state.selectEmployee}
+              onChange={this.handleChangeSelectEmployee}
+              options={this.state.employee}
+            />
 
-            <select value={this.state.idPerson}
-                    id='idPerson'
-                    name='idPerson'
-                    className="form-control my-2"
-                    onChange={this.handleChange}>
-              <SelectFirstOptionCompany action={this.state.action} peoples={this.state.peoples} idPerson={this.state.idPerson}/>
-              <SelectCompanies peoples={this.state.peoples}/>
-            </select>
-
+            <Select
+              className="my-2"
+              placeholder="Selecciona un puesto"
+              value={this.state.selectEmployment}
+              onChange={this.handleChangeSelectEmployment}
+              options={this.state.employments}
+            />
             <ButtonAction action={this.props.action}/>
           </form>
         </div>
