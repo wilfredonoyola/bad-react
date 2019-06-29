@@ -9,6 +9,7 @@ import { faLongArrowAltLeft } from '@fortawesome/free-solid-svg-icons'
 import { ToastContainer, toast } from 'react-toastify';
 import Select from 'react-select';
 import agent from '../utils/agent';
+import InputMask from 'react-input-mask';
 
 
 const MessageError = function(props){
@@ -48,12 +49,37 @@ class Add extends Component {
       action: '',
       id: '',
       idPerson: '',
-      employees: [],
+      products: [],
       companies: [],
       employments: [],
-      selectEmployee: null,
-      selectCompany: null,
-      selectEmployment: null,
+      dateStartInstallation: '',
+      dateStartMaintenance: '',
+      typeList: [
+        { label: 'Pone licitación', value: 0 },
+        { label: 'Libre Gestión', value: 1}
+      ],
+      warrantyList: [
+        { label: '6 Meses', value: 0 },
+        { label: '12 Meses', value: 1},
+        { label: '24 Meses', value: 2},
+        { label: '36 Meses', value: 3},
+        { label: '48 Meses', value: 4},
+        { label: '60 Meses', value: 5},
+        { label: '72 Meses', value: 6}
+
+      ],
+      companiesAuthorized:[],
+      companiesAuthorizedInstall:[],
+      shiftInstallation: [],
+      shiftMaintenance: [],
+      selectType: null,
+      selectCompaniesAuthorized: null,
+      selectProduct: null,
+      selectWarranty: null,
+      selectCompanyInstallation: null,
+      selectShiftInstallation: null,
+      selectShiftMaintenance: null,
+      select: null,
       isLoading: false
     }
     this.handleChange = this.handleChange.bind(this)
@@ -61,11 +87,12 @@ class Add extends Component {
   }
 
   componentDidMount(){
-    this.getCompanies();
-    this.getPeoplesNotEmployee();
-    this.getEmployments();
     agent.setToken(this.props.token);
-    if(this.props.action && this.props.action ==='edit'){
+
+    this.setState({ companiesAuthorized: this.props.companiesAuthorized });
+    this.setState({ products: this.props.products });
+    this.setState({ companiesAuthorizedInstall: this.props.companiesAuthorizedInstall });
+    /*if(this.props.action && this.props.action ==='edit'){
       const _person = this.props.person;
       this.setState({
         action: 'edit',
@@ -74,123 +101,65 @@ class Add extends Component {
         email: _person.correoElectronico,
         idPerson: _person.idPersona
       })
-    }
+    }*/
   }
 
   static async getInitialProps(ctx) {
     const _isAuth = isLogged(ctx);
-    const { token } = nextCookie(ctx)
+    const { token } = nextCookie(ctx);
     agent.setToken(token);
-    return { isAuth: _isAuth, token: token }
-  }
+    const _companiesAuthorized = await agent.Shopping.getCompanyProviderAuthorized();
+    const companiesAuthorized = _companiesAuthorized.map(function (cpn) {
+      return { value: cpn.id, label: cpn.nombreEmpresa };
+    });
 
-  async getCompanies(){
-    const url =  `${process.env.API_URL}/Empleadoes/EmpresasDisponibles`
+    const _products = await agent.Products.all();
+    const products = _products.map(function (cpn) {
+      return { value: cpn.idProducto, label: cpn.nombreProducto };
+    });
 
-    try {
-      const response = await fetch(url, {
-        method: 'GET',
-        // credentials: 'include',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          // 'Access-Control-Allow-Origin': '*',
-          'Authorization': 'Bearer ' + this.props.token ,
-        },
-        // body: JSON.stringify(aPerson)
-      })
-      if (response.ok) {
-        const companies = await response.json()
-        console.log('companies : ', companies);
-        const _companies = companies.map(function (company) {
-          return { value: company.id, label: company.nombreEmpresa };
-        });
-        this.setState({companies : _companies});
-      } else {
-        let error = new Error(response.statusText)
-        error.response = response
-        throw error
-      }
-    } catch (error) {
-      console.error(
-        'You have an error in your code or there are Network issues.',
-        error
-      )
-      // this.setState({ error: error.message })
+
+    const _companiesAuthorizedInstall = await agent.Shopping.getCompanyProviderAuthorizedInstall();
+    const companiesAuthorizedInstall = _companiesAuthorizedInstall.map(function (cpn) {
+      return { value: cpn.id, label: cpn.nombreEmpresa };
+    });
+
+    return {
+      isAuth: _isAuth,
+      token: token,
+      companiesAuthorized: companiesAuthorized,
+      products: products,
+      companiesAuthorizedInstall: companiesAuthorizedInstall
     }
   }
 
+  getShiftInstallation(id){
+    const _this = this;
+    agent.Shopping.getShiftInstallation(id).then(function (res) {
+      const shiftInstallation = res.map(function (cpn) {
+         return { value: cpn.id, label: cpn.nombreEmpresa };
+       });
 
-  async getPeoplesNotEmployee(){
-    const url =  `${process.env.API_URL}/Empleadoes/ObtenerPersonasNoEmpleadas`
-
-    try {
-      const response = await fetch(url, {
-        method: 'GET',
-        // credentials: 'include',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          // 'Access-Control-Allow-Origin': '*',
-          'Authorization': 'Bearer ' + this.props.token ,
-        },
-        // body: JSON.stringify(aPerson)
-      })
-      if (response.ok) {
-        const employee = await response.json()
-        console.log(' employeee : ', employee);
-        const _employee = employee.map(function (emp) {
-          return { value: emp.id, label: emp.nombreCompleto };
-        });
-        this.setState({employee : _employee})
-      } else {
-        let error = new Error(response.statusText)
-        error.response = response
-        throw error
-      }
-    } catch (error) {
-      console.error(
-        'You have an error in your code or there are Network issues.',
-        error
-      )
-      // this.setState({ error: error.message })
-    }
+      _this.setState({ shiftInstallation: shiftInstallation})
+      console.log('getShiftInstallation : ', res);
+    }, function (err) {
+      console.log('ERR : ', err)
+    });
   }
 
-  async getEmployments(){
-    const url =  `${process.env.API_URL}/Empleadoes/ObtenerPuestos`
 
-    try {
-      const response = await fetch(url, {
-        method: 'GET',
-        // credentials: 'include',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          // 'Access-Control-Allow-Origin': '*',
-          'Authorization': 'Bearer ' + this.props.token ,
-        },
-        // body: JSON.stringify(aPerson)
-      })
-      if (response.ok) {
-        const employments = await response.json()
-        console.log('Employments : ', employments);
-        const _employments = employments.map(function (employment) {
-          return { value: employment.id, label: employment.nombreLista };
-        });
-        this.setState({employments : _employments});
-      } else {
-        let error = new Error(response.statusText)
-        error.response = response
-        throw error
-      }
-    } catch (error) {
-      console.error(
-        'You have an error in your code or there are Network issues.',
-        error
-      )
-      // this.setState({ error: error.message })
-    }
+  getShiftMaintenance(id){
+    const _this = this;
+    agent.Shopping.getShiftMaintenance(id).then(function (res) {
+      const shiftMaintenance = res.map(function (cpn) {
+        return { value: cpn.id, label: cpn.nombreEmpresa };
+      });
+
+      _this.setState({ shiftMaintenance: shiftMaintenance})
+      console.log('getShiftMaintenance : ', res);
+    }, function (err) {
+      console.log('ERR : ', err)
+    });
   }
 
   handleChange (event) {
@@ -202,16 +171,34 @@ class Add extends Component {
     });
   }
 
-  handleChangeSelectCompany = selectCompany => {
-    this.setState({ selectCompany });
+  handleChangeSelectType = selectType => {
+    this.setState({ selectType });
   };
 
-  handleChangeSelectEmployee = selectEmployee => {
-    this.setState({ selectEmployee });
+  handleChangeSelectCompany = selectCompaniesAuthorized => {
+    this.setState({ selectCompaniesAuthorized });
   };
 
-  handleChangeSelectEmployment = selectEmployment => {
-    this.setState({ selectEmployment });
+  handleChangeSelectProducts = selectProduct => {
+    this.setState({ selectProduct });
+  };
+
+  handleChangeSelectWarranty = selectWarranty => {
+    this.setState({ selectWarranty });
+  };
+
+  handleChangeSelectCompanyInstallation = selectCompanyInstallation => {
+    this.setState({ selectCompanyInstallation });
+    this.getShiftInstallation((selectCompanyInstallation.value));
+    this.getShiftMaintenance((selectCompanyInstallation.value))
+  };
+
+  handleChangeSelectShiftInstallation = selectShiftInstallation => {
+    this.setState({ selectShiftInstallation });
+  };
+
+  handleChangeSelectShiftMaintenance = selectShiftMaintenance => {
+    this.setState({ selectShiftMaintenance });
   };
 
   async handleSubmit (event) {
@@ -219,34 +206,48 @@ class Add extends Component {
     let isValidForm = true;
     const _this = this;
     this.setState({ error: '' });
-    if(!this.state.selectCompany || !this.state.selectEmployee || !this.state.selectEmployment){
+
+    if(!this.state.selectType
+      || !this.state.selectCompaniesAuthorized
+      || !this.state.selectProduct
+      || !this.state.selectWarranty
+      || !this.state.selectCompanyInstallation
+      || !this.state.selectShiftInstallation
+      || !this.state.selectShiftMaintenance
+      || !this.state.dateStartInstallation
+      || !this.state.dateStartMaintenance){
       isValidForm = false;
     }
     if(!isValidForm){
       this.setState({ error: 'Es requerido llenar todos los campos'});
-      return ;
+     return ;
     }
-    const aEmployee =  {
-      "idEmpresa": this.state.selectCompany.value,
-      "idPersona": this.state.selectEmployee.value,
-      "idPuesto": this.state.selectEmployment.value
+    const shooping =  {
+      "tipoContratacion": this.state.selectType.value,
+      "idEmpresaProveedora": this.state.selectCompaniesAuthorized.value,
+      "idProducto": this.state.selectProduct.value,
+      "garantia": this.state.selectWarranty.value,
+      "idEmpresaInstalacion": this.state.selectCompanyInstallation.value,
+      "idEncargadoInstalacion": this.state.selectShiftInstallation.value,
+      "idEmpleadoMantenimiento": this.state.selectShiftMaintenance.value,
+      "fechaInicioInstalacion": this.state.dateStartInstallation,
+      "fechaInicioMantenimiento": this.state.dateStartMaintenance
     };
 
     this.setState({isLoading: true});
 
-    const url = this.props.action === 'edit' ? `${process.env.API_URL}/Usuarios/${this.state.id}` : `${process.env.API_URL}/Empleadoes`
-    agent.Employee.create(aEmployee).then(function (res) {
+    agent.Employee.create(shooping).then(function (res) {
       _this.notify();
       _this.setState({isLoading: false});
-      window.location.href = '/employee';
+      window.location.href = '/shopping';
     }, function (err) {
       _this.setState({isLoading: false});
       _this.errorNotify();
     })
   }
 
-  notify = () => toast("Empleado Agregado exitosamente!", { type: 'success', autoClose: 2000 });
-  errorNotify = () => toast("Ha ocurrido un error al agregar un empleado.", { type: 'error', autoClose: 4000 });
+  notify = () => toast("Compra Agregado exitosamente!", { type: 'success', autoClose: 2000 });
+  errorNotify = () => toast("Ha ocurrido un error al agregar una compra.", { type: 'error', autoClose: 4000 });
 
   render () {
     return (
@@ -269,27 +270,77 @@ class Add extends Component {
             <label htmlFor="inputEmail" className="sr-only">Email address</label>
             <Select
               className="my-2"
-              placeholder="Selecciona una Empresa"
-              value={this.state.selectCompany}
+              placeholder="Tipo de Contratación"
+              value={this.state.selectType}
+              onChange={this.handleChangeSelectType}
+              options={this.state.typeList}
+            />
+
+            <Select
+              className="my-2"
+              placeholder="Empresa Proveedora"
+              value={this.state.selectCompaniesAuthorized}
               onChange={this.handleChangeSelectCompany}
-              options={this.state.companies}
+              options={this.state.companiesAuthorized}
             />
 
             <Select
               className="my-2"
-              placeholder="Selecciona una Empleado"
-              value={this.state.selectEmployee}
-              onChange={this.handleChangeSelectEmployee}
-              options={this.state.employee}
+              placeholder="Selecciona una Producto"
+              value={this.state.selectProduct}
+              onChange={this.handleChangeSelectProducts}
+              options={this.state.products}
             />
 
             <Select
               className="my-2"
-              placeholder="Selecciona un puesto"
-              value={this.state.selectEmployment}
-              onChange={this.handleChangeSelectEmployment}
-              options={this.state.employments}
+              placeholder="Garantia"
+              value={this.state.selectWarranty}
+              onChange={this.handleChangeSelectWarranty}
+              options={this.state.warrantyList}
             />
+
+            <Select
+              className="my-2"
+              placeholder="Empresa Autorizada para Instalar"
+              value={this.state.selectCompanyInstallation}
+              onChange={this.handleChangeSelectCompanyInstallation}
+              options={this.state.companiesAuthorizedInstall}
+            />
+
+            <Select
+              className="my-2"
+              placeholder="Encargado de Instalacion"
+              value={this.state.selectShiftInstallation}
+              onChange={this.handleChangeSelectShiftInstallation}
+              options={this.state.shiftInstallation}
+            />
+
+            <InputMask mask="99/99/9999"
+                       maskChar={null}
+                       placeholder="Fecha de inicio de la Instalación"
+                       className="form-control my-2"
+                       id='dateStartInstallation'
+                       name='dateStartInstallation'
+                       value={this.state.dateStartInstallation}
+                       onChange={this.handleChange}/>
+
+            <Select
+              className="my-2"
+              placeholder="Encargado de Mantenimiento"
+              value={this.state.selectShiftMaintenance}
+              onChange={this.handleChangeSelectShiftMaintenance}
+              options={this.state.shiftMaintenance}
+            />
+
+            <InputMask mask="99/99/9999"
+                       maskChar={null}
+                       placeholder="Fecha de inicio de la Mantenimiento"
+                       className="form-control my-2"
+                       id='dateStartMaintenance'
+                       name='dateStartMaintenance'
+                       value={this.state.dateStartMaintenance}
+                       onChange={this.handleChange}/>
             <ButtonAction action={this.props.action}/>
           </form>
         </div>

@@ -26,14 +26,14 @@ function PeopleContent(props) {
           </svg> */}
           <div className="media-body pb-3 mb-0 small lh-125">
             <strong className="d-block text-gray-dark">{institution.nombreInstitucionG}</strong>'
-            <div className="float-right">
+            {/*<div className="float-right">
               <a href={ '/add_company?action=edit&id=' + institution.idInstitucionG} className="btn btn-link btn-sm">
                 Editar
               </a>
               <a href="" className="btn btn-link btn-sm">
                 Eliminar
               </a>
-            </div>
+            </div>*/}
           </div>
         </div>
       </div>
@@ -44,6 +44,7 @@ function PeopleContent(props) {
 const People = props => {
   // const { nombreCompleto, accion } = props.data
   const { institutionsList } = props
+  console.log('institutionsList : ', institutionsList);
 
   return (
     <Layout isAuth={props.isAuth}>

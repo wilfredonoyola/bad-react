@@ -87,6 +87,8 @@ const Profile = {
 };
 
 const Employee = {
+  get: () =>
+  requests.get(`/Empleadoes`),
   all: id =>
     requests.get(`/Empleadoes/${id}`),
   current: () =>
@@ -129,6 +131,23 @@ const Users = {
     requests.put(`/Usuarios/QuitarRoles/${id}`, payload)
 };
 
+const Companies = {
+  all: () =>
+    requests.get(`/Usuarios`),
+  get: (id) =>
+    requests.get(`/Usuarios/${id}`),
+  login: (email, password) =>{
+    return requests.post('/users/login', { user: { email, password } })},
+  createGovernmentInstitution: (institution) =>
+    requests.post('/InstitucionGubernamentals',  institution ),
+  save: user =>
+    requests.put('/user', { user }),
+  addRole: (id, payload) =>
+    requests.post(`/Usuarios/AgregarRoles/${id}`, payload),
+  removeRole: (id, payload) =>
+    requests.put(`/Usuarios/QuitarRoles/${id}`, payload)
+};
+
 const Products = {
   all: () =>
     requests.get(`/Productoes`),
@@ -146,10 +165,36 @@ const Products = {
     requests.put(`/Usuarios/QuitarRoles/${id}`, payload)
 };
 
+const Shopping = {
+  all: () =>
+    requests.get(`/Compras`),
+  getCompanyProviderAuthorized: () =>
+    requests.get(`/EmpresaProveedoras/AutorizadasVender`),
+  getCompanyProviderAuthorizedInstall: () =>
+    requests.get(`/EmpresaProveedoras/AutorizadasInstalar`),
+  getShiftInstallation: (id) =>
+    requests.get(`/EmpresaProveedoras/EmpleadosInstalacion/${id}`),
+  getShiftMaintenance: (id) =>
+    requests.get(`/EmpresaProveedoras/EmpleadosMantenimiento/${id}`),
+
+  login: (email, password) =>{
+    return requests.post('/users/login', { user: { email, password } })},
+  create: (product) =>
+    requests.post('/Productoes',  product ),
+  save: user =>
+    requests.put('/user', { user }),
+  addRole: (id, payload) =>
+    requests.post(`/Usuarios/AgregarRoles/${id}`, payload),
+  removeRole: (id, payload) =>
+    requests.put(`/Usuarios/QuitarRoles/${id}`, payload)
+};
+
 export default {
+  Shopping,
   Products,
   Users,
   Employee,
+  Companies,
   Roles,
   Articles,
   Auth,

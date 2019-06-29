@@ -2,14 +2,13 @@ import { Component } from 'react'
 import fetch from 'isomorphic-unfetch'
 import nextCookie from 'next-cookies'
 import {isLogged, login, withAuthSync} from '../utils/auth'
-import { Button } from 'reactstrap';
-import Link from 'next/link'
 import Layout from '../components/layout'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLongArrowAltLeft } from '@fortawesome/free-solid-svg-icons'
 import { ToastContainer, toast } from 'react-toastify';
-import Router from 'next/router';
 import InputMask from 'react-input-mask';
+import agent from "../utils/agent";
+import Select from 'react-select';
 
 const MessageError = function(props){
   if(!props.error){
@@ -22,6 +21,8 @@ const MessageError = function(props){
     </div>
   )
 };
+
+
 
 const ButtonAction = function(props){
   if(props.action && props.action === 'edit'){
@@ -42,51 +43,96 @@ class Add extends Component {
     super(props)
 
     this.state = {
-      firstName: '',
-      lastName: '',
-      dui: '',
-      nit: '',
-      isss: '',
-      fotoPerfil: '',
-      homePhone: '',
-      mobilePhone: '',
-      email : '',
-      usuarioSession : 0,
+      companyName: '',
+      telephoneSwitch: '',
+      telephonePBX: '',
+      email: '',
+      website: '',
       error: '',
       action: '',
-      id: ''
+      employee: [],
+      id: '',
+      selectDelegate: null
     }
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
   }
 
   componentDidMount(){
+    agent.setToken(this.props.token);
+    this.setState({employee: this.props.employee});
     if(this.props.action && this.props.action ==='edit'){
-      const _person = this.props.person;
-      const mobilePhone =  _person.contactoPersonaDetalles[0] ? _person.contactoPersonaDetalles[0].descripcionContacto : '';
-      const homePhone =  _person.contactoPersonaDetalles[1] ? _person.contactoPersonaDetalles[1].descripcionContacto : '';
-      const email =  _person.contactoPersonaDetalles[2] ? _person.contactoPersonaDetalles[2].descripcionContacto : '';
+      const _company = this.props.company;
+      const telePhoneswitch =  _company.contactoEmpresaDetalles.find( compa => compa.nombreLista === 'Conmutador' );
+      const telephonePBX =  _company.contactoEmpresaDetalles.find( compa => compa.nombreLista === 'PBX' );
+      const email =  _company.contactoEmpresaDetalles.find( compa => compa.nombreLista === 'Correo Electrónico' );
+      const website =  _company.contactoEmpresaDetalles.find( compa => compa.nombreLista === 'Página Web' );
 
       this.setState({
         action: 'edit',
-        id: _person.idPersona,
-        firstName: _person.nombrePersona,
-        lastName: _person.apellidoPersona,
-        dui: _person.dui,
-        nit: _person.nit,
-        isss: _person.isss,
-        mobilePhone: mobilePhone ,
-        homePhone: homePhone,
-        email: email
+        id: _company.idEmpresaProveedora || '',
+        companyName: _company.nombreEmpresa || '',
+        address: _company.direccionEmpresa || '',
+        nit: _company.nitempresa || '',
+        ammountAllow: _company.montoPermitido || '',
+        // responsable: _company.responsable,
+        telephoneSwitch: telePhoneswitch.descripcionContacto ?  telePhoneswitch.descripcionContacto : '' ,
+        telephonePBX: telephonePBX.descripcionContacto ?  telephonePBX.descripcionContacto : '',
+        email: email.descripcionContacto ?  email.descripcionContacto : '',
+        website: website.descripcionContacto ?  website.descripcionContacto : ''
       })
     }
   }
 
+  handleChangeSelectDelegate = selectDelegate => {
+    console.log('selectDelegate :  ', selectDelegate);
+    this.setState({ selectDelegate });
+  };
+
+  async getUsers(){
+    const url =  `${process.env.API_URL}/Usuarios`
+
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        // credentials: 'include',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          'Authorization': 'Bearer ' + this.props.token ,
+        },
+        // body: JSON.stringify(aPerson)
+      })
+      if (response.ok) {
+        const users= await response.json();
+        this.setState({users : users})
+      } else {
+        let error = new Error(response.statusText)
+        error.response = response
+        throw error
+      }
+    } catch (error) {
+      console.error(
+        'You have an error in your code or there are Network issues.',
+        error
+      )
+      // this.setState({ error: error.message })
+    }
+  }
+
+
   static async getInitialProps(ctx) {
     const _isAuth = isLogged(ctx);
-    const { token } = nextCookie(ctx)
+    const { token } = nextCookie(ctx);
+    agent.setToken(token);
+    const _employee = await agent.Employee.get();
+    console.log('_employee : ', _employee );
+    const employee = _employee.map(function (cpn) {
+      return { value: cpn.id, label: cpn.nombreCompleto };
+    });
     if(ctx.query.id && ctx.query.action && ctx.query.action === 'edit'){
-      const url = `${process.env.API_URL}/Personas/${ctx.query.id}`
+      const url = `${process.env.API_URL}/EmpresaProveedoras/${ctx.query.id}`
       try {
         const response = await fetch(url, {
           headers: {
@@ -97,15 +143,15 @@ class Add extends Component {
         })
 
         if (response.ok) {
-          let personObj = await response.json()
-          return { person: personObj, isAuth: _isAuth, action: 'edit'}
+          let companyObj = await response.json()
+          return { company: companyObj, isAuth: _isAuth, action: 'edit', employee: employee}
         }
-        return { error : 'Un error ocurrio.', isAuth: _isAuth, person: [], token: token, action: 'edit'}
+        return { error : 'Un error ocurrio.', isAuth: _isAuth, company: [], token: token, action: 'edit',  employee: employee}
       } catch (error) {
-        return { error : error, isAuth: _isAuth , person: [], token: token, action: 'edit'}
+        return { error : error, isAuth: _isAuth , company: [], token: token, action: 'edit',  employee: employee}
       }
     }
-    return { isAuth: _isAuth, token: token }
+    return { isAuth: _isAuth, token: token,  employee: employee }
   }
 
   handleChange (event) {
@@ -118,73 +164,59 @@ class Add extends Component {
   }
 
   async handleSubmit (event) {
+    const _this = this;
     event.preventDefault()
-    this.setState({ error: '' })
-    const aPerson =  {
-      "nombrePersona": this.state.firstName,
-      "apellidoPersona": this.state.lastName,
-      "dui": this.state.dui,
-      "nit": this.state.nit,
-      "isss": this.state.isss,
-      "fotoPerfil": 'https://ui-avatars.com/api/?name=' + this.state.firstName + '+' + this.state.lastName,
-      "telefonoFijo": this.state.homePhone,
-      "telefonoMovil": this.state.mobilePhone,
-      "correoElectronico": this.state.email
+    this.setState({error: ''})
+    if (!this.state.selectDelegate) {
+      this.setState({error: 'Es requerido llenar todos los campos'});
+      return;
+    }
+    const company = {
+      "nombreInstitucionG": this.state.companyName,
+      "logotipoInstitucionG": 'url',
+      "telefonoConmutador": this.state.telephoneSwitch,
+      "telefonoPBX": this.state.telephonePBX,
+      "correoElectronico": this.state.email,
+      "paginaWeb": this.state.website,
+      "encargadoUACI": this.state.selectDelegate.value
     }
 
+
     let isValidForm = true;
-    for (let [key, value] of Object.entries(aPerson)) {
-      if( !value ){
+    for (let [key, value] of Object.entries(company)) {
+      if (!value) {
         isValidForm = false;
       }
     }
-    if(!isValidForm){
-      this.setState({ error: 'Es requerido llenar todos los campos'});
-      return ;
+    if (!isValidForm) {
+      this.setState({error: 'Es requerido llenar todos los campos'});
+      return;
     }
 
-    const url = this.props.action === 'edit' ? `${process.env.API_URL}/Personas/${this.state.id}` : `${process.env.API_URL}/Personas`
+    agent.Companies.createGovernmentInstitution(company).then(function (res) {
+      _this.notify();
+      _this.setState({isLoading: false});
+      window.location.href = '/institutions';
+    }, function (err) {
+      _this.setState({isLoading: false});
+      _this.errorNotify();
+    })
 
-    try {
-      const response = await fetch(url, {
-        method: this.props.action === 'edit' ? 'PUT' : 'POST',
-        // credentials: 'include',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-          'Authorization': 'Bearer ' + this.props.token ,
-        },
-        body: JSON.stringify(aPerson)
-      })
-      if (response.ok) {
-        this.notify();
-        window.location.href = '/people';
-      } else {
-        let error = new Error(response.statusText)
-        error.response = response
-        throw error
-      }
-    } catch (error) {
-      console.error(
-        'You have an error in your code or there are Network issues.',
-        error
-      )
-      this.setState({ error: error.message })
-    }
+
   }
 
-  notify = () => toast("Usuario Agregado exitosamente!", { type: 'success', autoClose: 2000 });
+  notify = () => toast("Institucion Agregado exitosamente!", { type: 'success', autoClose: 2000 });
+  errorNotify = () => toast("Ha ocurrido un error al agregar una Institución.", { type: 'error', autoClose: 4000 });
 
   render () {
     return (
       <Layout isAuth={this.props.isAuth}>
         <div className="nav-scroller bg-white shadow-sm">
           <nav className="nav nav-underline">
-            <a className="p-2 text-dark nav-link" href='/people'>
-              <FontAwesomeIcon icon={faLongArrowAltLeft} /> Personas
+            <a className="p-2 text-dark nav-link" href='/institutions'>
+              <FontAwesomeIcon icon={faLongArrowAltLeft} /> Todas las Instituciones
             </a>
-            <a className="p-2 nav-link active disabled" href="#">Agregar Personas</a>
+            <a className="p-2 nav-link active disabled" href="#">Agregar Instituciones de Gobierno</a>
           </nav>
         </div>
         <div className="my-3 p-3 bg-white rounded shadow-sm">
@@ -197,67 +229,38 @@ class Add extends Component {
             <label htmlFor="inputEmail" className="sr-only">Email address</label>
             <input
               type='text'
-              id='firstName'
-              name='firstName'
+              id='companyName'
+              name='companyName'
               className="form-control"
-              placeholder="Primer Nombre"
+              placeholder="Nombre de la Institución"
               required=""
-              value={this.state.firstName}
+              value={this.state.companyName}
               onChange={this.handleChange}
               autoFocus=""/>
             <label htmlFor="inputPassword" className="sr-only">Segundo Nombre</label>
-            <input
-              type='text'
-              id='lastName'
-              name='lastName'
-              className="form-control my-2"
-              placeholder="Segundo Nombre"
-              required=""
-              value={this.state.lastName}
-              onChange={this.handleChange}
-              autoFocus=""/>
-            <InputMask mask="99999999-9"
-                       maskChar={null}
-                       placeholder="DUI"
-                       className="form-control my-2"
-                       id='dui'
-                       name='dui'
-                       value={this.state.dui}
-                       onChange={this.handleChange}/>
-
-            <InputMask mask="9999-999999-999-9"
-                       maskChar={null}
-                       placeholder="NIT"
-                       className="form-control my-2"
-                       id='nit'
-                       name='nit'
-                       value={this.state.nit}
-                       onChange={this.handleChange}/>
-
-            <InputMask mask="999999"
-                       maskChar={null}
-                       placeholder="ISSS"
-                       className="form-control my-2"
-                       id='isss'
-                       name='isss'
-                       value={this.state.isss}
-                       onChange={this.handleChange}/>
+            <Select
+              className="my-2"
+              placeholder="Encargado"
+              value={this.state.selectDelegate}
+              onChange={this.handleChangeSelectDelegate}
+              options={this.state.employee}
+            />
 
             <InputMask mask="9999-9999"
                        maskChar={null}
-                       placeholder="Telefono Fijo"
+                       placeholder="Telefono Conmutador"
                        className="form-control my-2"
-                       id='homePhone'
-                       name='homePhone'
-                       value={this.state.homePhone}
+                       id='telephoneSwitch'
+                       name='telephoneSwitch'
+                       value={this.state.telephoneSwitch}
                        onChange={this.handleChange}/>
             <InputMask mask="9999-9999"
                        maskChar={null}
-                       placeholder="Telefono Movil"
+                       placeholder="Telefono PBX"
                        className="form-control my-2"
-                       id='mobilePhone'
-                       name='mobilePhone'
-                       value={this.state.mobilePhone}
+                       id='telephonePBX'
+                       name='telephonePBX'
+                       value={this.state.telephonePBX}
                        onChange={this.handleChange}/>
 
             <input
@@ -268,6 +271,17 @@ class Add extends Component {
               placeholder="Correo Electronico"
               required=""
               value={this.state.email}
+              onChange={this.handleChange}
+              autoFocus=""/>
+
+            <input
+              type='text'
+              id='website'
+              name='website'
+              className="form-control my-2"
+              placeholder="Pagina Web"
+              required=""
+              value={this.state.website}
               onChange={this.handleChange}
               autoFocus=""/>
             <ButtonAction action={this.props.action}/>
