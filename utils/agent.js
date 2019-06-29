@@ -129,7 +129,25 @@ const Users = {
     requests.put(`/Usuarios/QuitarRoles/${id}`, payload)
 };
 
+const Products = {
+  all: () =>
+    requests.get(`/Usuarios`),
+  getCompanyProvider: () =>
+    requests.get(`/EmpresaProveedoras`),
+  login: (email, password) =>{
+    return requests.post('/users/login', { user: { email, password } })},
+  create: (product) =>
+    requests.post('/Productoes',  product ),
+  save: user =>
+    requests.put('/user', { user }),
+  addRole: (id, payload) =>
+    requests.post(`/Usuarios/AgregarRoles/${id}`, payload),
+  removeRole: (id, payload) =>
+    requests.put(`/Usuarios/QuitarRoles/${id}`, payload)
+};
+
 export default {
+  Products,
   Users,
   Employee,
   Roles,

@@ -60,6 +60,20 @@ const Dashboard = props => {
               </a>
             </div>
           </div>
+          <div className="card mb-4 shadow-sm">
+            <div className="card-header">
+              <h4 className="my-0 font-weight-normal">Productos</h4>
+            </div>
+            <div className="card-body">
+              <a href='/products' className="btn btn-lg btn-block btn-outline-primary">
+                Todos Productos
+              </a>
+
+              <a href='/add_products' className="btn btn-lg btn-block btn-outline-primary">
+                Agregar Productos
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </Layout>

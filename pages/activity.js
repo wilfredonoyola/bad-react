@@ -33,6 +33,10 @@ function ActivityContent(props) {
               {activity.nombreCompleto}
               <small className="text-muted mt-2"> (<TimeAgo date={activity.fechaHora} formatter={formatter} />)</small>
             </strong>
+            <div className="py-2">
+
+              Accion Realizada: <strong>{activity.mantenimiento}</strong>
+            </div>
 
             <div className="py-2"> {activity.accion}</div>
             <div className="py-2">  Fecha: {activity.fechaHora}</div>
