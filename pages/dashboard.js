@@ -62,6 +62,20 @@ const Dashboard = props => {
           </div>
           <div className="card mb-4 shadow-sm">
             <div className="card-header">
+              <h4 className="my-0 font-weight-normal">Compras</h4>
+            </div>
+            <div className="card-body">
+              <a href='/shopping' className="btn btn-lg btn-block btn-outline-primary">
+                Todas las Compras
+              </a>
+
+              <a href='/add_shopping' className="btn btn-lg btn-block btn-outline-primary">
+                Nueva Compra
+              </a>
+            </div>
+          </div>
+          <div className="card mb-4 shadow-sm">
+            <div className="card-header">
               <h4 className="my-0 font-weight-normal">Productos</h4>
             </div>
             <div className="card-body">

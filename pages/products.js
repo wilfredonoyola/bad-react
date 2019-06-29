@@ -76,7 +76,7 @@ const Products = props => {
       </div>
       <div className="my-3 p-3 bg-white rounded shadow-sm">
         <h6 className="pb-2 mb-0 float-left">Todos los Productos</h6>
-        <a href='/add_product' className="p-2 mb-2 btn btn-primary float-right">
+        <a href='/add_products' className="p-2 mb-2 btn btn-primary float-right">
           <FontAwesomeIcon icon={faPlus} />
           <span className="ml-2 ">Nuevo Producto</span>
         </a>
