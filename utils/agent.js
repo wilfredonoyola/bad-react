@@ -131,7 +131,7 @@ const Users = {
 
 const Products = {
   all: () =>
-    requests.get(`/Usuarios`),
+    requests.get(`/Productoes`),
   getCompanyProvider: () =>
     requests.get(`/EmpresaProveedoras`),
   login: (email, password) =>{
