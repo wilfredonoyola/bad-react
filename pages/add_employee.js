@@ -67,7 +67,6 @@ class Add extends Component {
     agent.setToken(this.props.token);
     if(this.props.action && this.props.action ==='edit'){
       const _person = this.props.person;
-      console.log('PERSON : ', _person);
       this.setState({
         action: 'edit',
         id: _person.idUsuario,
@@ -81,29 +80,7 @@ class Add extends Component {
   static async getInitialProps(ctx) {
     const _isAuth = isLogged(ctx);
     const { token } = nextCookie(ctx)
-
-    // Get All Peoples
-
-    if(ctx.query.id && ctx.query.action && ctx.query.action === 'edit'){
-      const url = `${process.env.API_URL}/Usuarios/${ctx.query.id}`
-      try {
-        const response = await fetch(url, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token ,
-            'X-Requested-With': 'XMLHttpRequest'
-          }
-        })
-
-        if (response.ok) {
-          let personObj = await response.json()
-          return { person: personObj, isAuth: _isAuth, action: 'edit'}
-        }
-        return { error : 'Un error ocurrio.', isAuth: _isAuth, person: [], token: token, action: 'edit'}
-      } catch (error) {
-        return { error : error, isAuth: _isAuth , person: [], token: token, action: 'edit'}
-      }
-    }
+    agent.setToken(token);
     return { isAuth: _isAuth, token: token }
   }
 
@@ -220,7 +197,6 @@ class Add extends Component {
     const target = event.target;
     const value = target.value;
     const name = target.name;
-    console.log('HANDLE CHANGE...');
     this.setState({
       [name]: value
     });

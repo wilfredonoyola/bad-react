@@ -28,9 +28,6 @@ function PeopleContent(props) {
             <strong className="d-block text-gray-dark">{people.nombreCompleto }</strong>
             Nombre de Empresa : {people.nombreEmpresa}
             <div className="float-right">
-              <a href={ '/add_people?action=edit&id=' + people.id} className="btn btn-link btn-sm">
-                Editar
-              </a>
               <a href="" className="btn btn-link btn-sm">
                 Eliminar
               </a>

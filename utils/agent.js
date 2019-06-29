@@ -87,6 +87,8 @@ const Profile = {
 };
 
 const Employee = {
+  all: id =>
+    requests.get(`/Empleadoes/${id}`),
   current: () =>
     requests.get('/user'),
   login: (email, password) =>{
@@ -97,8 +99,40 @@ const Employee = {
     requests.put('/user', { user })
 };
 
+const Roles = {
+  all: () =>
+    requests.get(`/Rols`),
+  current: () =>
+    requests.get('/user'),
+  login: (email, password) =>{
+    return requests.post('/users/login', { user: { email, password } })},
+  create: (employee) =>
+    requests.post('/Empleadoes',  employee ),
+  save: user =>
+    requests.put('/user', { user })
+};
+
+const Users = {
+  all: () =>
+    requests.get(`/Usuarios`),
+  get: (id) =>
+    requests.get(`/Usuarios/${id}`),
+  login: (email, password) =>{
+    return requests.post('/users/login', { user: { email, password } })},
+  create: (employee) =>
+    requests.post('/Empleadoes',  employee ),
+  save: user =>
+    requests.put('/user', { user }),
+  addRole: (id, payload) =>
+    requests.post(`/Usuarios/AgregarRoles/${id}`, payload),
+  removeRole: (id, payload) =>
+    requests.put(`/Usuarios/QuitarRoles/${id}`, payload)
+};
+
 export default {
+  Users,
   Employee,
+  Roles,
   Articles,
   Auth,
   Comments,

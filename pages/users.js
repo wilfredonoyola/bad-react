@@ -27,6 +27,9 @@ function PeopleContent(props) {
           <div className="media-body pb-3 mb-0 small lh-125">
             <strong className="d-block text-gray-dark">{people.correoElectronico}</strong>
             <div className="float-right">
+              <a href={ '/user_roles?id=' + people.idusuario} className="btn btn-link btn-sm">
+                Roles
+              </a>
               <a href={ '/add_user?action=edit&id=' + people.idusuario} className="btn btn-link btn-sm">
                 Editar
               </a>
