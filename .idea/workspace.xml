@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="6e1b37f6-1731-4b24-a208-0358c7ce9f88" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/pages/add_shopping.js" beforeDir="false" afterPath="$PROJECT_DIR$/pages/add_shopping.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/agent.js" beforeDir="false" afterPath="$PROJECT_DIR$/utils/agent.js" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -73,8 +74,8 @@
       <file leaf-file-name="add_shopping.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/pages/add_shopping.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="260">
-              <caret line="57" column="19" selection-start-line="57" selection-start-column="19" selection-end-line="57" selection-end-column="19" />
+            <state relative-caret-position="357">
+              <caret line="233" column="65" selection-start-line="233" selection-start-column="65" selection-end-line="233" selection-end-column="65" />
               <folding>
                 <element signature="e#0#33#0" expanded="true" />
               </folding>
@@ -119,8 +120,8 @@
       <file leaf-file-name="agent.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/utils/agent.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="472">
-              <caret line="177" column="67" selection-start-line="177" selection-start-column="17" selection-end-line="177" selection-end-column="67" />
+            <state relative-caret-position="452">
+              <caret line="183" column="5" selection-start-line="183" selection-start-column="2" selection-end-line="183" selection-end-column="5" />
               <folding>
                 <element signature="e#0#51#0" expanded="true" />
               </folding>
@@ -132,9 +133,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>SelectFirstOption</find>
-      <find>POST</find>
-      <find>person</find>
       <find>Nuevo</find>
       <find>consol</find>
       <find>put</find>
@@ -162,6 +160,9 @@
       <find>handleChangeSelectWarranty</find>
       <find>nueva in</find>
       <find>console</find>
+      <find>getShiftInstallation</find>
+      <find>EMPRE</find>
+      <find>EMPRES</find>
     </findStrings>
     <replaceStrings>
       <replace>Usuarios</replace>
@@ -204,9 +205,9 @@
         <option value="$PROJECT_DIR$/pages/products.js" />
         <option value="$PROJECT_DIR$/pages/add_employee.js" />
         <option value="$PROJECT_DIR$/pages/shopping.js" />
-        <option value="$PROJECT_DIR$/utils/agent.js" />
         <option value="$PROJECT_DIR$/pages/institutions.js" />
         <option value="$PROJECT_DIR$/pages/add_institution.js" />
+        <option value="$PROJECT_DIR$/utils/agent.js" />
         <option value="$PROJECT_DIR$/pages/add_shopping.js" />
       </list>
     </option>
@@ -323,12 +324,12 @@
       <workItem from="1560722428924" duration="17876000" />
       <workItem from="1560919239262" duration="6980000" />
       <workItem from="1560999311939" duration="28223000" />
-      <workItem from="1561764036034" duration="40444000" />
+      <workItem from="1561764036034" duration="42815000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="146368000" />
+    <option name="totallyTimeSpent" value="148739000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
@@ -755,8 +756,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/utils/agent.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="472">
-          <caret line="177" column="67" selection-start-line="177" selection-start-column="17" selection-end-line="177" selection-end-column="67" />
+        <state relative-caret-position="452">
+          <caret line="183" column="5" selection-start-line="183" selection-start-column="2" selection-end-line="183" selection-end-column="5" />
           <folding>
             <element signature="e#0#51#0" expanded="true" />
           </folding>
@@ -765,8 +766,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/pages/add_shopping.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="57" column="19" selection-start-line="57" selection-start-column="19" selection-end-line="57" selection-end-column="19" />
+        <state relative-caret-position="357">
+          <caret line="233" column="65" selection-start-line="233" selection-start-column="65" selection-end-line="233" selection-end-column="65" />
           <folding>
             <element signature="e#0#33#0" expanded="true" />
           </folding>

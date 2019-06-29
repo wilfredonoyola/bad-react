@@ -181,6 +181,8 @@ const Shopping = {
     return requests.post('/users/login', { user: { email, password } })},
   create: (product) =>
     requests.post('/Productoes',  product ),
+  buy: (buy) =>
+    requests.post('/Compras',  buy ),
   save: user =>
     requests.put('/user', { user }),
   addRole: (id, payload) =>

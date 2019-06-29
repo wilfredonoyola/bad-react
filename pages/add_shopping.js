@@ -59,13 +59,13 @@ class Add extends Component {
         { label: 'Libre Gestión', value: 1}
       ],
       warrantyList: [
-        { label: '6 Meses', value: 0 },
-        { label: '12 Meses', value: 1},
-        { label: '24 Meses', value: 2},
-        { label: '36 Meses', value: 3},
-        { label: '48 Meses', value: 4},
-        { label: '60 Meses', value: 5},
-        { label: '72 Meses', value: 6}
+        { label: '6 Meses', value: 6 },
+        { label: '12 Meses', value: 12},
+        { label: '24 Meses', value: 24},
+        { label: '36 Meses', value: 36},
+        { label: '48 Meses', value: 48},
+        { label: '60 Meses', value: 60},
+        { label: '72 Meses', value: 72}
 
       ],
       companiesAuthorized:[],
@@ -137,7 +137,7 @@ class Add extends Component {
     const _this = this;
     agent.Shopping.getShiftInstallation(id).then(function (res) {
       const shiftInstallation = res.map(function (cpn) {
-         return { value: cpn.id, label: cpn.nombreEmpresa };
+         return { value: cpn.id, label: cpn.nombreEmpleado };
        });
 
       _this.setState({ shiftInstallation: shiftInstallation})
@@ -152,7 +152,7 @@ class Add extends Component {
     const _this = this;
     agent.Shopping.getShiftMaintenance(id).then(function (res) {
       const shiftMaintenance = res.map(function (cpn) {
-        return { value: cpn.id, label: cpn.nombreEmpresa };
+        return { value: cpn.id, label: cpn.nombreEmpleado };
       });
 
       _this.setState({ shiftMaintenance: shiftMaintenance})
@@ -177,6 +177,7 @@ class Add extends Component {
 
   handleChangeSelectCompany = selectCompaniesAuthorized => {
     this.setState({ selectCompaniesAuthorized });
+    this.getShiftMaintenance((selectCompaniesAuthorized.value))
   };
 
   handleChangeSelectProducts = selectProduct => {
@@ -190,7 +191,6 @@ class Add extends Component {
   handleChangeSelectCompanyInstallation = selectCompanyInstallation => {
     this.setState({ selectCompanyInstallation });
     this.getShiftInstallation((selectCompanyInstallation.value));
-    this.getShiftMaintenance((selectCompanyInstallation.value))
   };
 
   handleChangeSelectShiftInstallation = selectShiftInstallation => {
@@ -223,7 +223,7 @@ class Add extends Component {
      return ;
     }
     const shooping =  {
-      "tipoContratacion": this.state.selectType.value,
+      "tipoContratacion": this.state.selectType.label,
       "idEmpresaProveedora": this.state.selectCompaniesAuthorized.value,
       "idProducto": this.state.selectProduct.value,
       "garantia": this.state.selectWarranty.value,
@@ -236,7 +236,7 @@ class Add extends Component {
 
     this.setState({isLoading: true});
 
-    agent.Employee.create(shooping).then(function (res) {
+    agent.Shopping.buy(shooping).then(function (res) {
       _this.notify();
       _this.setState({isLoading: false});
       window.location.href = '/shopping';
@@ -316,7 +316,7 @@ class Add extends Component {
               options={this.state.shiftInstallation}
             />
 
-            <InputMask mask="99/99/9999"
+            <InputMask mask="9999-99-99"
                        maskChar={null}
                        placeholder="Fecha de inicio de la Instalación"
                        className="form-control my-2"
@@ -333,7 +333,7 @@ class Add extends Component {
               options={this.state.shiftMaintenance}
             />
 
-            <InputMask mask="99/99/9999"
+            <InputMask mask="9999-99-99"
                        maskChar={null}
                        placeholder="Fecha de inicio de la Mantenimiento"
                        className="form-control my-2"
