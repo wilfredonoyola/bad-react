@@ -55,7 +55,7 @@ class Add extends Component {
       dateStartInstallation: '',
       dateStartMaintenance: '',
       typeList: [
-        { label: 'Pone licitación', value: 0 },
+        { label: 'Licitación', value: 0 },
         { label: 'Libre Gestión', value: 1}
       ],
       warrantyList: [

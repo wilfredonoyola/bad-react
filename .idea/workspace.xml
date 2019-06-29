@@ -2,12 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6e1b37f6-1731-4b24-a208-0358c7ce9f88" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/pages/shopping.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/add_institution.js" beforeDir="false" afterPath="$PROJECT_DIR$/pages/add_institution.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pages/add_shopping.js" beforeDir="false" afterPath="$PROJECT_DIR$/pages/add_shopping.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/institutions.js" beforeDir="false" afterPath="$PROJECT_DIR$/pages/institutions.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/agent.js" beforeDir="false" afterPath="$PROJECT_DIR$/utils/agent.js" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -75,11 +70,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="add_shopping.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="add_shopping.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/pages/add_shopping.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="442">
-              <caret line="113" column="7" selection-start-line="110" selection-start-column="4" selection-end-line="113" selection-end-column="7" />
+            <state relative-caret-position="260">
+              <caret line="57" column="19" selection-start-line="57" selection-start-column="19" selection-end-line="57" selection-end-column="19" />
               <folding>
                 <element signature="e#0#33#0" expanded="true" />
               </folding>
@@ -99,7 +94,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="add_institution.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="add_institution.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pages/add_institution.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="210">
@@ -124,8 +119,8 @@
       <file leaf-file-name="agent.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/utils/agent.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="134">
-              <caret line="89" column="5" selection-start-line="89" selection-start-column="2" selection-end-line="89" selection-end-column="5" />
+            <state relative-caret-position="472">
+              <caret line="177" column="67" selection-start-line="177" selection-start-column="17" selection-end-line="177" selection-end-column="67" />
               <folding>
                 <element signature="e#0#51#0" expanded="true" />
               </folding>
@@ -208,11 +203,11 @@
         <option value="$PROJECT_DIR$/pages/dashboard.js" />
         <option value="$PROJECT_DIR$/pages/products.js" />
         <option value="$PROJECT_DIR$/pages/add_employee.js" />
-        <option value="$PROJECT_DIR$/pages/add_shopping.js" />
         <option value="$PROJECT_DIR$/pages/shopping.js" />
         <option value="$PROJECT_DIR$/utils/agent.js" />
         <option value="$PROJECT_DIR$/pages/institutions.js" />
         <option value="$PROJECT_DIR$/pages/add_institution.js" />
+        <option value="$PROJECT_DIR$/pages/add_shopping.js" />
       </list>
     </option>
   </component>
@@ -328,12 +323,12 @@
       <workItem from="1560722428924" duration="17876000" />
       <workItem from="1560919239262" duration="6980000" />
       <workItem from="1560999311939" duration="28223000" />
-      <workItem from="1561764036034" duration="39401000" />
+      <workItem from="1561764036034" duration="40444000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="145325000" />
+    <option name="totallyTimeSpent" value="146368000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
@@ -737,26 +732,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pages/add_shopping.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="442">
-          <caret line="113" column="7" selection-start-line="110" selection-start-column="4" selection-end-line="113" selection-end-column="7" />
-          <folding>
-            <element signature="e#0#33#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utils/agent.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="134">
-          <caret line="89" column="5" selection-start-line="89" selection-start-column="2" selection-end-line="89" selection-end-column="5" />
-          <folding>
-            <element signature="e#0#51#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/pages/institutions.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="400">
@@ -774,6 +749,26 @@
           <folding>
             <element signature="e#0#33#0" expanded="true" />
             <element signature="n#!!block;n#getUsers#0;n#Add#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils/agent.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="472">
+          <caret line="177" column="67" selection-start-line="177" selection-start-column="17" selection-end-line="177" selection-end-column="67" />
+          <folding>
+            <element signature="e#0#51#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pages/add_shopping.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="260">
+          <caret line="57" column="19" selection-start-line="57" selection-start-column="19" selection-end-line="57" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#33#0" expanded="true" />
           </folding>
         </state>
       </provider>
